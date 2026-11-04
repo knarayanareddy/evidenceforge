@@ -8,29 +8,29 @@
       "reason": "89 local schema/oracle tests passed on Python 3.13.16. Not application integration."
     },
     "postgres_migrations": {
-      "status": "not_run",
-      "evidence": null,
-      "reason": "Requires implementation or independent execution/review."
+      "status": "passed",
+      "evidence": "tests/test_postgres_integration.py (8 tests, PostgreSQL 16.2 via pgserver)",
+      "reason": "Migrations 001-003 applied on real PG16; RLS/FK/immutability/fenced-lease/concurrent-idempotency verified."
     },
     "application_e2e": {
-      "status": "not_run",
-      "evidence": null,
-      "reason": "Requires implementation or independent execution/review."
+      "status": "passed",
+      "evidence": "tests/test_evf_journey.py + tests/test_docling_pilot.py",
+      "reason": "Local-store API journeys; PG-backed app runtime remains future wiring."
     },
     "authorization_matrix": {
-      "status": "not_run",
-      "evidence": null,
-      "reason": "Requires implementation or independent execution/review."
+      "status": "passed",
+      "evidence": "tests/test_api.py authorization tests",
+      "reason": "Capability/deny matrix in ASGI tests; independent review pending."
     },
     "oidc_integration": {
-      "status": "not_run",
-      "evidence": null,
-      "reason": "Requires implementation or independent execution/review."
+      "status": "passed",
+      "evidence": "tests/test_oidc_integration.py (3 tests vs scripts/local_idp.py over real HTTP)",
+      "reason": "SYNTHETIC local IdP only; production IdP/operator credentials remain gated. Browser login/callback/session routes not yet implemented."
     },
     "docling_integration": {
       "status": "not_run",
       "evidence": null,
-      "reason": "Docling not installed/run; fixture metadata explicitly synthetic."
+      "reason": "docling-parse pilot PASSES (real geometry/text, tests/test_docling_pilot.py). Full Docling ML pipeline blocked: HuggingFace model assets unreachable in sandbox egress; conversion fails closed (LocalEntryNotFoundError). No accuracy claims."
     },
     "executor_boundary": {
       "status": "not_run",
@@ -38,9 +38,9 @@
       "reason": "No Docker/runsc available in authoring environment; live code execution disabled."
     },
     "backup_restore": {
-      "status": "not_run",
-      "evidence": null,
-      "reason": "Requires implementation or independent execution/review."
+      "status": "passed",
+      "evidence": "scripts/backup_restore_check.py output BACKUP_RESTORE_OK",
+      "reason": "pg_dump/pg_restore round-trip verified marker row on disposable PG16 DBs."
     },
     "load_chaos": {
       "status": "not_run",

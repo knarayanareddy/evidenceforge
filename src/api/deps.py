@@ -52,6 +52,39 @@ def require_project_capability(required_capability: str) -> Callable:
     return project_capability_checker
 
 
+def user_has_capability(user: UserContext, project_id: str, capability: str) -> bool:
+    """Capability check: verified token roles UNION runtime store grants
+    (e.g. project creator grant recorded at creation time)."""
+    if user.has_project_capability(project_id, capability):
+        return True
+    from src.services.store import store
+    granted = store.user_roles(user.user_id, str(project_id))
+    if not granted:
+        return False
+    probe = UserContext(user_id=user.user_id, organization_id=user.organization_id,
+                        org_role=user.org_role, project_roles={str(project_id): granted})
+    return probe.has_project_capability(project_id, capability)
+
+
+def resolve_object_project(kind: str, object_id: str):
+    """Return the object's ACTUAL project_id from persistence, or None.
+    X-Project-Id is only a hint and is never used as ownership proof."""
+    from src.services.store import store
+    table = {"document": store.documents, "parse": store.parses,
+             "extraction": store.extractions, "export": store.exports,
+             "artifact": store.artifacts, "job": store.jobs,
+             "upload": store.uploads}.get(kind, {})
+    obj = table.get(str(object_id))
+    if obj is None:
+        return None
+    if kind == "parse":
+        doc = store.documents.get(obj["document_id"])
+        return doc["project_id"] if doc else None
+    if kind == "upload":
+        return obj.get("project_id")
+    return obj.get("project_id")
+
+
 # Backward-compatibility alias for project-path routes
 require_project_role = require_project_capability
 

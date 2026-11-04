@@ -77,10 +77,56 @@ def redact_metadata(value: Dict[str, Any]) -> Dict[str, Any]:
     return sanitized
 
 
+_jwks_cache = {"at": 0.0, "keys": {}}
+
+def _jwks(issuer: str):
+    """Fetch+cache JWKS (max 1h); no jku/x5u from token headers is ever trusted."""
+    import time
+    now = time.time()
+    if now - _jwks_cache["at"] < 3600 and _jwks_cache["keys"]:
+        return _jwks_cache["keys"]
+    url = issuer.rstrip("/") + "/.well-known/jwks.json"
+    if not url.startswith(("https://", "http://127.0.0.1", "http://localhost")):
+        raise ValueError("jwks_scheme_not_allowed")
+    import httpx  # fixed path on the operator-configured issuer only
+    keys = {k["kid"]: k for k in httpx.get(url, timeout=5).json()["keys"]}
+    _jwks_cache.update(at=now, keys=keys)
+    return keys
+
+
 def verify_token(token: str) -> Optional[UserContext]:
-    """Verify bearer token against cryptographic signature / OIDC claims.
-    Fail-closed: Returns None in production runtime until B03 identity
-    integration is configured. Never accepts static test bypass credentials.
-    Synthetic identities are injected exclusively via test dependency overrides.
+    """Verify an OIDC RS256 bearer token against the configured issuer JWKS.
+
+    Fail-closed: returns None unless OIDC_ISSUER is an http(s) issuer with a
+    reachable JWKS and the token passes signature/iss/aud/exp validation.
+    Membership comes from preprovisioned IdP claims (org_id, org_role,
+    project_roles) — never from static test tokens or bearer UUIDs.
+    The placeholder default issuer (auth.example.com) never verifies.
     """
-    return None
+    try:
+        import jwt as _jwt
+        from src.core.config import settings
+        issuer = settings.OIDC_ISSUER
+        if not issuer.startswith(("https://", "http://127.0.0.1", "http://localhost")) \
+                or "auth.example.com" in issuer:
+            return None
+        raw = token[7:] if token.startswith("Bearer ") else token
+        header = _jwt.get_unverified_header(raw)
+        jwk = _jwks(issuer).get(header.get("kid", ""))
+        if jwk is None:
+            _jwks_cache["at"] = 0.0  # one refresh on unknown kid
+            jwk = _jwks(issuer).get(header.get("kid", ""))
+            if jwk is None:
+                return None
+        import base64
+        from cryptography.hazmat.primitives.asymmetric import rsa as _rsa
+        dec = lambda b: int.from_bytes(base64.urlsafe_b64decode(b + "=" * (-len(b) % 4)), "big")
+        key = _rsa.RSAPublicNumbers(dec(jwk["e"]), dec(jwk["n"])).public_key()
+        claims = _jwt.decode(raw, key, algorithms=["RS256"], audience=settings.OIDC_CLIENT_ID,
+                             issuer=issuer, options={"require": ["exp", "iss", "sub"]})
+        return UserContext(user_id=str(claims["sub"]),
+                           organization_id=str(claims["org_id"]),
+                           org_role=str(claims.get("org_role", "member")),
+                           project_roles=claims.get("project_roles", {}))
+    except Exception:
+        return None
