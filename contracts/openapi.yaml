@@ -1,0 +1,3213 @@
+openapi: 3.1.0
+info:
+  title: "EvidenceForge + shared foundation \u2014 scoped contract view"
+  version: 0.2.0
+  description: Organizational view extracted unchanged from baseline v0.2; canonical
+    contracts/tests are in 05_Shared_Baseline. Browser auth/health is in auth-flow.yaml.
+servers:
+- url: /
+paths:
+  /api/v1/projects:
+    post:
+      operationId: foundation_create_project
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: &id001
+          type: string
+          format: uuid
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id001
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: admin
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+    get:
+      operationId: foundation_list_projects
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id001
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectPage'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: viewer
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: false
+  /api/v1/projects/{project_id}/uploads:
+    post:
+      operationId: foundation_create_upload
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema: &id002
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id002
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id002
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadCreate'
+  /api/v1/uploads/{upload_id}/bytes:
+    put:
+      operationId: foundation_put_upload
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id003
+          type: string
+          format: uuid
+      - name: upload_id
+        in: path
+        required: true
+        schema: *id003
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id003
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id003
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empty'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+  /api/v1/uploads/{upload_id}:finalize:
+    post:
+      operationId: foundation_finalize_upload
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id004
+          type: string
+          format: uuid
+      - name: upload_id
+        in: path
+        required: true
+        schema: *id004
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id004
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id004
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadFinalize'
+  /api/v1/artifacts/{artifact_id}:
+    get:
+      operationId: foundation_get_artifact
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id005
+          type: string
+          format: uuid
+      - name: artifact_id
+        in: path
+        required: true
+        schema: *id005
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id005
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/artifacts/{artifact_id}/bytes:
+    get:
+      operationId: foundation_download_artifact
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id006
+          type: string
+          format: uuid
+      - name: artifact_id
+        in: path
+        required: true
+        schema: *id006
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id006
+            ETag:
+              schema:
+                type: string
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/jobs/{job_id}:
+    get:
+      operationId: foundation_get_job
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id007
+          type: string
+          format: uuid
+      - name: job_id
+        in: path
+        required: true
+        schema: *id007
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id007
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: viewer
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: false
+  /api/v1/jobs/{job_id}:cancel:
+    post:
+      operationId: foundation_cancel_job
+      tags:
+      - foundation
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id008
+          type: string
+          format: uuid
+      - name: job_id
+        in: path
+        required: true
+        schema: *id008
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id008
+      responses:
+        '202':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id008
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: operator
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empty'
+  /api/v1/projects/{project_id}/evf/documents:
+    post:
+      operationId: evf_create_document
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema: &id009
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id009
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id009
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCreate'
+    get:
+      operationId: evf_list_documents
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema: *id009
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id009
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentPage'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: viewer
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: false
+  /api/v1/evf/documents/{document_id}:
+    get:
+      operationId: evf_get_document
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id010
+          type: string
+          format: uuid
+      - name: document_id
+        in: path
+        required: true
+        schema: *id010
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id010
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+    delete:
+      operationId: evf_delete_document
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: *id010
+      - name: document_id
+        in: path
+        required: true
+        schema: *id010
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id010
+      responses:
+        '202':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id010
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deletion'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: maintainer
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/evf/documents/{document_id}/parses:
+    post:
+      operationId: evf_create_parse
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id011
+          type: string
+          format: uuid
+      - name: document_id
+        in: path
+        required: true
+        schema: *id011
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id011
+      responses:
+        '202':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id011
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parse'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: operator
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParseCreate'
+  /api/v1/evf/parses/{parse_id}:
+    get:
+      operationId: evf_get_parse
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id012
+          type: string
+          format: uuid
+      - name: parse_id
+        in: path
+        required: true
+        schema: *id012
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id012
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parse'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/projects/{project_id}/evf/extractions:
+    post:
+      operationId: evf_create_extraction
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema: &id013
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id013
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id013
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Extraction'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtractionCreate'
+  /api/v1/evf/extractions/{extraction_id}:
+    get:
+      operationId: evf_get_extraction
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id014
+          type: string
+          format: uuid
+      - name: extraction_id
+        in: path
+        required: true
+        schema: *id014
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id014
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Extraction'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/evf/extractions/{extraction_id}/reviews:
+    post:
+      operationId: evf_create_review
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id015
+          type: string
+          format: uuid
+      - name: extraction_id
+        in: path
+        required: true
+        schema: *id015
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id015
+      - name: If-Match
+        in: header
+        required: true
+        schema:
+          type: string
+          pattern: ^"[1-9][0-9]*"$
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id015
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+    get:
+      operationId: evf_list_reviews
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: *id015
+      - name: extraction_id
+        in: path
+        required: true
+        schema: *id015
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id015
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewPage'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+  /api/v1/evf/extractions/{extraction_id}/exports:
+    post:
+      operationId: evf_create_export
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id016
+          type: string
+          format: uuid
+      - name: extraction_id
+        in: path
+        required: true
+        schema: *id016
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: *id016
+      responses:
+        '201':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id016
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Export'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportCreate'
+  /api/v1/evf/exports/{export_id}:
+    get:
+      operationId: evf_get_export
+      tags:
+      - evf
+      security:
+      - sessionCookie: []
+      - apiKey: []
+      parameters:
+      - name: X-Project-ID
+        in: header
+        required: true
+        schema: &id017
+          type: string
+          format: uuid
+      - name: export_id
+        in: path
+        required: true
+        schema: *id017
+      responses:
+        '200':
+          description: Successful operation. ETag on revisioned resources.
+          headers:
+            X-Request-ID:
+              schema: *id017
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Export'
+        '400':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '413':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '415':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: See Problem.code and normative behavior matrix.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      x-required-role: analyst
+      x-project-authorization: resolve parent resource on every call
+      x-content-access: true
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-baseline-session
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          enum:
+          - invalid
+          - unauthenticated
+          - forbidden
+          - not_found
+          - conflict
+          - precondition_failed
+          - too_large
+          - unsupported_media
+          - quota
+          - unavailable
+          - mode_disabled
+        detail:
+          type: string
+          maxLength: 1000
+        request_id:
+          type: string
+          format: uuid
+        field_errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              code:
+                type: string
+            required:
+            - path
+            - code
+            additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - code
+      - detail
+      - request_id
+      additionalProperties: false
+    Empty:
+      type: object
+      properties: {}
+      required: []
+      additionalProperties: false
+    ProjectCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        content_capture:
+          type: string
+          enum:
+          - metadata_only
+          - redacted
+        external_transfer:
+          type: boolean
+      required:
+      - name
+      - content_capture
+      - external_transfer
+      additionalProperties: false
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        content_capture:
+          type: string
+          enum:
+          - metadata_only
+          - redacted
+        external_transfer:
+          type: boolean
+        revision:
+          type: integer
+          minimum: 1
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - content_capture
+      - external_transfer
+      - revision
+      - created_at
+      additionalProperties: false
+    UploadCreate:
+      type: object
+      properties:
+        filename:
+          type: string
+          minLength: 1
+          maxLength: 200
+        media_type:
+          type: string
+          enum:
+          - application/pdf
+          - application/json
+          - application/zip
+          - text/plain
+        byte_size:
+          type: integer
+          minimum: 1
+          maximum: 104857600
+        sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        classification:
+          type: string
+          enum:
+          - synthetic
+          - public_authorized
+          - sensitive
+      required:
+      - filename
+      - media_type
+      - byte_size
+      - sha256
+      - classification
+      additionalProperties: false
+    Upload:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        artifact_id:
+          type: string
+          format: uuid
+        put_path:
+          type: string
+          pattern: ^/api/v1/
+        expires_at:
+          type: string
+          format: date-time
+        maximum_bytes:
+          type: integer
+          minimum: 1
+      required:
+      - id
+      - artifact_id
+      - put_path
+      - expires_at
+      - maximum_bytes
+      additionalProperties: false
+    UploadFinalize:
+      type: object
+      properties:
+        sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        byte_size:
+          type: integer
+          minimum: 1
+      required:
+      - sha256
+      - byte_size
+      additionalProperties: false
+    Artifact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+        sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        byte_size:
+          type: integer
+          minimum: 1
+        media_type:
+          type: string
+        status:
+          type: string
+          enum:
+          - pending
+          - ready
+          - quarantined
+          - deleting
+          - deleted
+        classification:
+          type: string
+          enum:
+          - synthetic
+          - public_authorized
+          - sensitive
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - project_id
+      - sha256
+      - byte_size
+      - media_type
+      - status
+      - classification
+      - created_at
+      additionalProperties: false
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+        state:
+          type: string
+          enum:
+          - queued
+          - leased
+          - running
+          - cancel_requested
+          - succeeded
+          - failed
+          - timed_out
+          - cancelled
+          - failed_unknown_effect
+        attempt:
+          type: integer
+          minimum: 0
+        revision:
+          type: integer
+          minimum: 1
+        created_at:
+          type: string
+          format: date-time
+        result_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        error_code:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - project_id
+      - kind
+      - state
+      - attempt
+      - revision
+      - created_at
+      - result_id
+      - error_code
+      additionalProperties: false
+    Deletion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        state:
+          type: string
+          enum:
+          - requested
+          - revoked
+          - purging
+          - complete
+          - failed
+        revoked_at:
+          type: string
+          format: date-time
+        purge_deadline:
+          type: string
+          format: date-time
+        affected_artifacts:
+          type: integer
+          minimum: 0
+      required:
+      - id
+      - state
+      - revoked_at
+      - purge_deadline
+      - affected_artifacts
+      additionalProperties: false
+    DocumentCreate:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+      required:
+      - artifact_id
+      - title
+      additionalProperties: false
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        source_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        source_artifact_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        state:
+          type: string
+          enum:
+          - quarantined
+          - accepted
+          - parsing
+          - parsed
+          - partial
+          - failed
+          - deleting
+        page_count:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 100
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - project_id
+      - version
+      - source_sha256
+      - source_artifact_id
+      - title
+      - state
+      - page_count
+      - created_at
+      additionalProperties: false
+    ParseCreate:
+      type: object
+      properties:
+        profile:
+          type: string
+          enum:
+          - fixture/1
+          - docling_local/1
+        source_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+      required:
+      - profile
+      - source_sha256
+      additionalProperties: false
+    Parse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        source_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        profile:
+          type: string
+          enum:
+          - fixture/1
+          - docling_local/1
+        profile_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        state:
+          type: string
+          enum:
+          - queued
+          - running
+          - parsed
+          - partial
+          - failed
+        job_id:
+          type: string
+          format: uuid
+        page_count:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - document_id
+      - source_sha256
+      - profile
+      - profile_sha256
+      - state
+      - job_id
+      - page_count
+      - created_at
+      additionalProperties: false
+    Region:
+      type: object
+      properties:
+        page_ordinal:
+          type: integer
+          minimum: 1
+        page_label:
+          type: string
+          maxLength: 50
+        x0:
+          type: number
+          minimum: 0
+          maximum: 1
+        y0:
+          type: number
+          minimum: 0
+          maximum: 1
+        x1:
+          type: number
+          minimum: 0
+          maximum: 1
+        y1:
+          type: number
+          minimum: 0
+          maximum: 1
+      required:
+      - page_ordinal
+      - x0
+      - y0
+      - x1
+      - y1
+      additionalProperties: false
+    Evidence:
+      type: object
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        source_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        parse_id:
+          type: string
+          format: uuid
+        element_id:
+          type: string
+          minLength: 1
+          maxLength: 100
+        region:
+          $ref: '#/components/schemas/Region'
+        quote:
+          type: string
+          maxLength: 10000
+        method:
+          type: string
+          enum:
+          - digital_text
+          - ocr_text
+          - manual_image
+        support:
+          type: string
+          enum:
+          - supported_exact
+          - supported_normalized
+          - ambiguous
+          - unsupported
+          - source_unavailable
+      required:
+      - document_id
+      - source_sha256
+      - parse_id
+      - element_id
+      - region
+      - quote
+      - method
+      - support
+      additionalProperties: false
+    Field:
+      type: object
+      properties:
+        key:
+          type: string
+          enum:
+          - entity
+          - period_end
+          - currency
+          - scale
+          - revenue_current
+          - revenue_prior
+          - assets_current
+          - assets_prior
+        raw:
+          type:
+          - string
+          - 'null'
+        value:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+          pattern: ^[A-Z]{3}$
+        scale:
+          enum:
+          - '1'
+          - '1000'
+          - '1000000'
+          - null
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date
+        missing_reason:
+          enum:
+          - not_present
+          - unreadable
+          - ambiguous
+          - unsupported
+          - parse_failed
+          - null
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/Evidence'
+          maxItems: 20
+        review_state:
+          type: string
+          enum:
+          - unreviewed
+          - accepted
+          - corrected
+          - rejected
+          - needs_review
+        risk_flags:
+          type: array
+          items:
+            type: string
+            enum:
+            - unit_ambiguous
+            - period_ambiguous
+            - support_mismatch
+            - arithmetic_discrepancy
+            - wrong_row
+            - parse_warning
+          uniqueItems: true
+      required:
+      - key
+      - raw
+      - value
+      - currency
+      - scale
+      - period_end
+      - missing_reason
+      - evidence
+      - review_state
+      - risk_flags
+      additionalProperties: false
+    ExtractionCreate:
+      type: object
+      properties:
+        schema_version:
+          const: annual-report-8/1
+        method:
+          type: string
+          enum:
+          - fixture
+          - deterministic
+        parse_id:
+          type: string
+          format: uuid
+      required:
+      - schema_version
+      - method
+      - parse_id
+      additionalProperties: false
+    Extraction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+        parse_id:
+          type: string
+          format: uuid
+        schema_version:
+          const: annual-report-8/1
+        revision:
+          type: integer
+          minimum: 1
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+          minItems: 8
+          maxItems: 8
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - project_id
+      - parse_id
+      - schema_version
+      - revision
+      - fields
+      - created_at
+      additionalProperties: false
+    ReviewPatch:
+      type: object
+      properties:
+        key:
+          type: string
+        action:
+          type: string
+          enum:
+          - accept
+          - correct
+          - reject
+        value:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+        scale:
+          type:
+          - string
+          - 'null'
+        period_end:
+          type:
+          - string
+          - 'null'
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/Evidence'
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 1000
+      required:
+      - key
+      - action
+      - reason
+      additionalProperties: false
+    ReviewCreate:
+      type: object
+      properties:
+        base_revision:
+          type: integer
+          minimum: 1
+        patches:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewPatch'
+          minItems: 1
+          maxItems: 8
+      required:
+      - base_revision
+      - patches
+      additionalProperties: false
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        extraction_id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+        base_revision:
+          type: integer
+          minimum: 1
+        actor_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        patches:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewPatch'
+      required:
+      - id
+      - extraction_id
+      - revision
+      - base_revision
+      - actor_id
+      - created_at
+      - patches
+      additionalProperties: false
+    ExportCreate:
+      type: object
+      properties:
+        review_revision:
+          type: integer
+          minimum: 1
+        format:
+          type: string
+          enum:
+          - json
+          - csv
+        allow_incomplete:
+          type: boolean
+      required:
+      - review_revision
+      - format
+      - allow_incomplete
+      additionalProperties: false
+    Export:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+        extraction_id:
+          type: string
+          format: uuid
+        review_revision:
+          type: integer
+          minimum: 1
+        artifact_id:
+          type: string
+          format: uuid
+        manifest_sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        incomplete:
+          type: boolean
+        warnings:
+          type: array
+          items:
+            type: string
+            maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - project_id
+      - extraction_id
+      - review_revision
+      - artifact_id
+      - manifest_sha256
+      - incomplete
+      - warnings
+      - created_at
+      additionalProperties: false
+    ProjectPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+          maxItems: 100
+        next_cursor:
+          type:
+          - string
+          - 'null'
+      required:
+      - items
+      - next_cursor
+      additionalProperties: false
+    DocumentPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+          maxItems: 100
+        next_cursor:
+          type:
+          - string
+          - 'null'
+      required:
+      - items
+      - next_cursor
+      additionalProperties: false
+    ReviewPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+          maxItems: 100
+        next_cursor:
+          type:
+          - string
+          - 'null'
+      required:
+      - items
+      - next_cursor
+      additionalProperties: false

@@ -1,0 +1,216 @@
+version: ui-contract/1
+tokens:
+  spacing_px:
+  - 4
+  - 8
+  - 12
+  - 16
+  - 24
+  - 32
+  - 48
+  font_px:
+    body: 16
+    small: 14
+    h1: 30
+    h2: 24
+  colors:
+    text: '#17324D'
+    background: '#F5F8FB'
+    surface: '#FFFFFF'
+    primary: '#087A83'
+    danger: '#B42318'
+    warning: '#8A5800'
+  focus: '3px solid #087A83 with 2px offset'
+  breakpoints_px:
+  - 390
+  - 768
+  - 1280
+global_rules:
+- All forms derive structural validation from request schemas; server remains authoritative.
+- Source/replay/experiment mode badge always visible; simulation cannot look live.
+- Capture credentials and raw API keys never in browser/localStorage.
+- Conflict preserves unsaved edits and requires explicit rebase.
+- No color-only status; all charts have tables; all source views have text alternatives.
+- Keyboard order header -> filters -> main table/list -> selected detail -> actions.
+  Escape returns focus to opener.
+- Mobile uses source/form tabs, not side-by-side squeezed panes.
+- No optimistic mutation of immutable records; only draft text may autosave.
+- Approval dialogs state project, revision/digest, action, limits and effect; Cancel
+  is default focus.
+screens:
+- id: evf_library
+  route: /evf/documents
+  title: PDF library
+  role: analyst
+  layout:
+    desktop: navigation + header + 2-column evidence/list and detail
+    tablet: collapsible detail drawer
+    mobile: stacked read/act tabs with preserved selection
+  fields:
+  - title
+  - version
+  - state
+  - page_count
+  - source_sha256
+  states: &id001
+    loading: skeleton; preserve stable navigation; aria-busy true
+    empty: specific empty message and permitted create/sample action
+    ready: data + revision + source/mode labels
+    denied: no content; request ID; do not suggest guessing IDs
+    error: safe problem summary + retry only if idempotent
+    conflict: show base/current; no automatic overwrite
+    offline: read-only cached view labeled stale; no hidden queued writes
+    partial: explicit omissions and blocked approval/export where required
+  actions:
+  - id: upload
+    operation_id: foundation_create_upload
+    request_schema: UploadCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  - id: register
+    operation_id: evf_create_document
+    request_schema: DocumentCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  accessibility:
+  - heading hierarchy
+  - labeled controls
+  - focus return
+  - text alternative
+  - 200/400% zoom/reflow review
+  - screen-reader task test
+  required_tests:
+  - evf_library_happy
+  - evf_library_denied
+  - evf_library_offline
+  - evf_library_error
+  - evf_library_keyboard
+- id: evf_source
+  route: /evf/documents/:id
+  title: Source and parse
+  role: analyst
+  layout:
+    desktop: navigation + header + 2-column evidence/list and detail
+    tablet: collapsible detail drawer
+    mobile: stacked read/act tabs with preserved selection
+  fields:
+  - profile
+  - state
+  - source_sha256
+  - page_count
+  - evidence
+  states: *id001
+  actions:
+  - id: parse
+    operation_id: evf_create_parse
+    request_schema: ParseCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  - id: extract
+    operation_id: evf_create_extraction
+    request_schema: ExtractionCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  accessibility:
+  - heading hierarchy
+  - labeled controls
+  - focus return
+  - text alternative
+  - 200/400% zoom/reflow review
+  - screen-reader task test
+  required_tests:
+  - evf_source_happy
+  - evf_source_denied
+  - evf_source_offline
+  - evf_source_error
+  - evf_source_keyboard
+- id: evf_review
+  route: /evf/extractions/:id
+  title: Evidence review workspace
+  role: analyst
+  layout:
+    desktop: navigation + header + 2-column evidence/list and detail
+    tablet: collapsible detail drawer
+    mobile: stacked read/act tabs with preserved selection
+  fields:
+  - key
+  - raw
+  - value
+  - currency
+  - scale
+  - period_end
+  - evidence
+  - review_state
+  - risk_flags
+  states: *id001
+  actions:
+  - id: save_revision
+    operation_id: evf_create_review
+    request_schema: ReviewCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  accessibility:
+  - heading hierarchy
+  - labeled controls
+  - focus return
+  - text alternative
+  - 200/400% zoom/reflow review
+  - screen-reader task test
+  required_tests:
+  - evf_review_happy
+  - evf_review_denied
+  - evf_review_offline
+  - evf_review_error
+  - evf_review_keyboard
+- id: evf_export
+  route: /evf/extractions/:id/export
+  title: Reviewed export
+  role: analyst
+  layout:
+    desktop: navigation + header + 2-column evidence/list and detail
+    tablet: collapsible detail drawer
+    mobile: stacked read/act tabs with preserved selection
+  fields:
+  - review_revision
+  - format
+  - allow_incomplete
+  - warnings
+  states: *id001
+  actions:
+  - id: export
+    operation_id: evf_create_export
+    request_schema: ExportCreate
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  - id: download
+    operation_id: foundation_download_artifact
+    request_schema: null
+    validation: schema + semantic preflight; mark errors adjacent to field
+    in_flight: disable duplicate submit; keep focus; show real status
+    success: persist returned revision; announce once; navigate only after response
+    failure: retain input; render safe Problem; conflict requires explicit resolution
+  accessibility:
+  - heading hierarchy
+  - labeled controls
+  - focus return
+  - text alternative
+  - 200/400% zoom/reflow review
+  - screen-reader task test
+  required_tests:
+  - evf_export_happy
+  - evf_export_denied
+  - evf_export_offline
+  - evf_export_error
+  - evf_export_keyboard

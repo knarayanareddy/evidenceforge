@@ -1,0 +1,212 @@
+[
+  {
+    "operation": "foundation_create_project",
+    "method": "POST",
+    "path": "/api/v1/projects",
+    "role": "admin",
+    "if_match": false,
+    "request": "ProjectCreate",
+    "response": "Project",
+    "success": 201
+  },
+  {
+    "operation": "foundation_list_projects",
+    "method": "GET",
+    "path": "/api/v1/projects",
+    "role": "viewer",
+    "if_match": false,
+    "request": null,
+    "response": "ProjectPage",
+    "success": 200
+  },
+  {
+    "operation": "foundation_create_upload",
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/uploads",
+    "role": "analyst",
+    "if_match": false,
+    "request": "UploadCreate",
+    "response": "Upload",
+    "success": 201
+  },
+  {
+    "operation": "foundation_put_upload",
+    "method": "PUT",
+    "path": "/api/v1/uploads/{upload_id}/bytes",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Empty",
+    "success": 200
+  },
+  {
+    "operation": "foundation_finalize_upload",
+    "method": "POST",
+    "path": "/api/v1/uploads/{upload_id}:finalize",
+    "role": "analyst",
+    "if_match": false,
+    "request": "UploadFinalize",
+    "response": "Artifact",
+    "success": 200
+  },
+  {
+    "operation": "foundation_get_artifact",
+    "method": "GET",
+    "path": "/api/v1/artifacts/{artifact_id}",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Artifact",
+    "success": 200
+  },
+  {
+    "operation": "foundation_download_artifact",
+    "method": "GET",
+    "path": "/api/v1/artifacts/{artifact_id}/bytes",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Artifact",
+    "success": 200
+  },
+  {
+    "operation": "foundation_get_job",
+    "method": "GET",
+    "path": "/api/v1/jobs/{job_id}",
+    "role": "viewer",
+    "if_match": false,
+    "request": null,
+    "response": "Job",
+    "success": 200
+  },
+  {
+    "operation": "foundation_cancel_job",
+    "method": "POST",
+    "path": "/api/v1/jobs/{job_id}:cancel",
+    "role": "operator",
+    "if_match": false,
+    "request": "Empty",
+    "response": "Job",
+    "success": 202
+  },
+  {
+    "operation": "evf_create_document",
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/evf/documents",
+    "role": "analyst",
+    "if_match": false,
+    "request": "DocumentCreate",
+    "response": "Document",
+    "success": 201
+  },
+  {
+    "operation": "evf_list_documents",
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}/evf/documents",
+    "role": "viewer",
+    "if_match": false,
+    "request": null,
+    "response": "DocumentPage",
+    "success": 200
+  },
+  {
+    "operation": "evf_get_document",
+    "method": "GET",
+    "path": "/api/v1/evf/documents/{document_id}",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Document",
+    "success": 200
+  },
+  {
+    "operation": "evf_create_parse",
+    "method": "POST",
+    "path": "/api/v1/evf/documents/{document_id}/parses",
+    "role": "operator",
+    "if_match": false,
+    "request": "ParseCreate",
+    "response": "Parse",
+    "success": 202
+  },
+  {
+    "operation": "evf_get_parse",
+    "method": "GET",
+    "path": "/api/v1/evf/parses/{parse_id}",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Parse",
+    "success": 200
+  },
+  {
+    "operation": "evf_create_extraction",
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/evf/extractions",
+    "role": "analyst",
+    "if_match": false,
+    "request": "ExtractionCreate",
+    "response": "Extraction",
+    "success": 201
+  },
+  {
+    "operation": "evf_get_extraction",
+    "method": "GET",
+    "path": "/api/v1/evf/extractions/{extraction_id}",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Extraction",
+    "success": 200
+  },
+  {
+    "operation": "evf_create_review",
+    "method": "POST",
+    "path": "/api/v1/evf/extractions/{extraction_id}/reviews",
+    "role": "analyst",
+    "if_match": true,
+    "request": "ReviewCreate",
+    "response": "Review",
+    "success": 201
+  },
+  {
+    "operation": "evf_list_reviews",
+    "method": "GET",
+    "path": "/api/v1/evf/extractions/{extraction_id}/reviews",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "ReviewPage",
+    "success": 200
+  },
+  {
+    "operation": "evf_create_export",
+    "method": "POST",
+    "path": "/api/v1/evf/extractions/{extraction_id}/exports",
+    "role": "analyst",
+    "if_match": false,
+    "request": "ExportCreate",
+    "response": "Export",
+    "success": 201
+  },
+  {
+    "operation": "evf_get_export",
+    "method": "GET",
+    "path": "/api/v1/evf/exports/{export_id}",
+    "role": "analyst",
+    "if_match": false,
+    "request": null,
+    "response": "Export",
+    "success": 200
+  },
+  {
+    "operation": "evf_delete_document",
+    "method": "DELETE",
+    "path": "/api/v1/evf/documents/{document_id}",
+    "role": "maintainer",
+    "if_match": false,
+    "request": null,
+    "response": "Deletion",
+    "success": 202
+  }
+]
