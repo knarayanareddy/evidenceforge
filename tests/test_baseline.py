@@ -124,7 +124,10 @@ def test_release_gate_refuses_unimplemented():
  from scripts.release_gate import evaluate
  result=evaluate(P/'evidence/release-status.json')
  assert result['ready'] is False
- assert 'application_e2e' in result['blocking'] and 'independent_security_review' in result['blocking']
+ # application_e2e now has real journey evidence (see release-status.json);
+ # independent review and production gates must still block.
+ assert 'independent_security_review' in result['blocking'] and 'operator_signoff' in result['blocking']
+ assert 'application_e2e' not in result['blocking']
 
 def test_postgresql_syntax_only():
  from pglast import parse_sql

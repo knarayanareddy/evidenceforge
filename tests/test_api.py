@@ -74,11 +74,11 @@ async def test_create_project_requires_org_admin():
 
 
 @pytest.mark.asyncio
-async def test_create_project_fails_closed_in_b00():
+async def test_create_project_succeeds_for_admin():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         headers = {**AUTH_ADMIN, **IDEMP_HEADER}
         res = await ac.post("/api/v1/projects", json={"name": "Test"}, headers=headers)
-        assert res.status_code == 501
+        assert res.status_code == 201
 
 
 # --- Project-Path Route Denial & Capability Tests ---
@@ -176,4 +176,4 @@ async def test_multi_capability_union_grant():
             json={"profile": "fixture/1", "source_sha256": "0" * 64},
             headers=headers_op
         )
-        assert res_b.status_code == 501  # Passes auth (operator cap satisfied)
+        assert res_b.status_code == 404  # Passes auth; unknown document

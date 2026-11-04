@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     OIDC_CLIENT_ID: str = "evf-client"
 
     # Storage
-    ARTIFACT_STORAGE_PATH: str = "/tmp/artifacts"
+    ARTIFACT_STORAGE_PATH: str = "var/artifacts"  # operator sets an absolute private path in production
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
